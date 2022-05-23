@@ -36,14 +36,14 @@ void loop()
   // read header
   if (data[0] == 0xff)
   {
-      int sum;
+      int checksum;
       // data[0] = Header (1 Byte, 0xFF)
       // data[1] = Distance Data High 8-bits
       // data[2] = Distance Data Low  8-bits
-      sum = (data[0]+data[1]+data[2])&0x00FF;
+      checksum = (data[0]+data[1]+data[2])&0x00FF;
 
-      // data[3] = checksum (but only the low 8-bits of the accumulated value)
-      if (sum == data[3])
+      // data[3] = checkchecksum (but only the low 8-bits of the accumulated value)
+      if (checksum == data[3])
       {
         distance = (data[1]<<8)+data[2];
         
