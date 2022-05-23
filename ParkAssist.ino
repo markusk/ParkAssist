@@ -45,8 +45,8 @@ void loop()
       if (distance > 30)
       {
         Serial.print("distance=");
-        Serial.print(distance/10);
-        Serial.println("cm");
+        Serial.print(distance);
+        Serial.println("mm");
       }
       else 
       {
