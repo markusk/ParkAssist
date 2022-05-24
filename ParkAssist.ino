@@ -1,13 +1,23 @@
-const unsigned int TRIG_PIN=3;
-const unsigned int ECHO_PIN=2;
-const unsigned int BAUD_RATE=9600;
+const unsigned int TRIG_PIN = 3;
+const unsigned int ECHO_PIN = 2;
+//const unsigned int BAUD_RATE = 9600;
+
+// defining the delay factor between each LED blink
+const int blinkFactor = 10;
+// at this distance (or lower) the LED stays on - to stop the car
+const int parkHereDistance = 50;
 
 
 void setup()
 {
+  // The ultrasonic sensor SRF 05
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
-  Serial.begin(BAUD_RATE);
+
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(LED_BUILTIN, OUTPUT);
+
+  //Serial.begin(BAUD_RATE);
 }
 
 
@@ -24,18 +34,29 @@ void loop()
   
   // convert the time into a distance
   duration = pulseIn(ECHO_PIN, HIGH);
-  distance = duration / 29.1 / 2;
  
-  if (duration==0)
+  if (duration == 0)
   {
-    Serial.println("Warning: no pulse from sensor");
+    //Serial.println("Warning: no pulse from sensor");
+    // set for blinking
+    distance = 1;
   } 
   else
   {
-    Serial.print("Distance:  ");
-    Serial.print(distance);
-    Serial.println(" cm");
+    distance = duration / 29.1 / 2;
+    //Serial.print("Distance:  ");
+    //Serial.print(distance);
+    //Serial.println(" cm");
   }
 
-  delay(500);
+
+  // turn the LED on (HIGH is the voltage level)
+  digitalWrite(LED_BUILTIN, HIGH);
+  // wait depending on the measured distance
+  delay(distance * blinkFactor);
+
+  // turn the LED off by making the voltage LOW
+  digitalWrite(LED_BUILTIN, LOW);
+  // wait depending on the measured distance
+  delay(distance * blinkFactor);
 }
