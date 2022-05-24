@@ -1,64 +1,41 @@
- // Source https://wiki.dfrobot.com/_A02YYUW_Waterproof_Ultrasonic_Sensor_SKU_SEN0311
-
-
-#include <SoftwareSerial.h>
-
-
-SoftwareSerial mySerial(10,11); // RX, TX   (module: rx=blue=11  tx=green=10)
-unsigned char data[4]={};
-float distance;
+const unsigned int TRIG_PIN=3;
+const unsigned int ECHO_PIN=2;
+const unsigned int BAUD_RATE=9600;
 
 
 void setup()
 {
-  Serial.begin(9600);
-  mySerial.begin(9600); 
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  Serial.begin(BAUD_RATE);
 }
 
 
 void loop()
 {
-  do
+  long duration, distance;
+
+
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  
+  // convert the time into a distance
+  duration = pulseIn(ECHO_PIN, HIGH);
+  distance = duration / 29.1 / 2;
+ 
+  if (duration==0)
   {
-    for(int i=0;i<4;i++)
-    {
-      data[i]=mySerial.read();
-    }
-  } while(mySerial.read()==0xff);
-
-  mySerial.flush();
-
-  // read header
-  if (data[0] == 0xff)
+    Serial.println("Warning: no pulse from sensor");
+  } 
+  else
   {
-    // data[0] = Header (1 Byte, 0xFF)
-    // data[1] = Distance Data High 8-bits
-    // data[2] = Distance Data Low  8-bits
-    int checksum;
-    checksum = (data[0]+data[1]+data[2])&0x00FF;
-
-    // data[3] = checkchecksum (but only the low 8-bits of the accumulated value)
-    if (checksum == data[3])
-    {
-      distance = (data[1]<<8)+data[2];
-        
-      if (distance > 30)
-      {
-        Serial.print("distance=");
-        Serial.print(distance);
-        Serial.println("mm");
-      }
-      else 
-      {
-        Serial.println("Below the lower limit");
-      }
-    }
-    else
-    {
-      Serial.println("ERROR");
-    }
+    Serial.print("Distance:  ");
+    Serial.print(distance);
+    Serial.println(" cm");
   }
 
-  // delay between each measurement
-  delay(100);
+  delay(500);
 }
