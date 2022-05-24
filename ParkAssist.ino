@@ -2,10 +2,16 @@ const unsigned int TRIG_PIN = 3;
 const unsigned int ECHO_PIN = 2;
 //const unsigned int BAUD_RATE = 9600;
 
+// for measuring the distance
+long duration = 0;
+long distance = 0;
+
 // defining the delay factor between each LED blink
 const int blinkFactor = 10;
 // at this distance (or lower) the LED stays on - to stop the car
 const int parkHereDistance = 50;
+
+
 
 
 void setup()
@@ -23,17 +29,8 @@ void setup()
 
 void loop()
 {
-  long duration, distance;
-
-
-  digitalWrite(TRIG_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
-  
-  // convert the time into a distance
-  duration = pulseIn(ECHO_PIN, HIGH);
+  // trigger ultrasonic sensor now
+  measure();
  
   if (duration == 0)
   {
@@ -59,4 +56,17 @@ void loop()
   digitalWrite(LED_BUILTIN, LOW);
   // wait depending on the measured distance
   delay(distance * blinkFactor);
+}
+
+
+void measure(void)
+{
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  
+  // convert the time into a distance
+  duration = pulseIn(ECHO_PIN, HIGH);
 }
